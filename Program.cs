@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProofOfCredit.Utils;
+using System;
 
 namespace ProofOfCredit
 {
@@ -6,7 +7,13 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            byte[] a = BitConverter.GetBytes(253*10000);
+            ByteArray ab = new ByteArray(a);
+            ByteArray bb = new ByteArray(BitConverter.GetBytes(5*10));
+            ByteArray cb = ab.Sum(bb);
+            ab.PrettyPrint();
+            bb.PrettyPrint();
+            cb.PrettyPrint();
         }
     }
 }

@@ -8,7 +8,6 @@ namespace ProofOfCredit.Transactions
 {
     class Transaction
     {
-
         public Transaction()
         {
 

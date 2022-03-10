@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ProofOfCredit.Members
 {
-    class User
+    class User : Member
     {
+        private void GenerateTransaction()
+        {
+
+        }
     }
 }

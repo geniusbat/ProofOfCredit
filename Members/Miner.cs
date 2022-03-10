@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ProofOfCredit.Members
 {
-    class Miner
+    class Miner : Member
     {
+        private void Mine()
+        {
+
+        }
     }
 }

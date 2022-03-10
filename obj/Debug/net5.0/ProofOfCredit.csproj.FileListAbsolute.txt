@@ -1,0 +1,16 @@
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.exe
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.deps.json
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.runtimeconfig.json
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.runtimeconfig.dev.json
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.dll
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ref\ProofOfCredit.dll
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\ProofOfCredit.pdb
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.csproj.AssemblyReference.cache
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.AssemblyInfoInputs.cache
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.AssemblyInfo.cs
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.csproj.CoreCompileInputs.cache
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.dll
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ref\ProofOfCredit.dll
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.pdb
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.genruntimeconfig.cache
