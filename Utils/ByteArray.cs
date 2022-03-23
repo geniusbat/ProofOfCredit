@@ -8,8 +8,8 @@ namespace ProofOfCredit.Utils
 {
     class ByteArray
     {
-        byte[] Bytes;
-        int Length;
+        public byte[] Bytes;
+        public int Length;
         public ByteArray(byte[] inputBytes)
         {
             this.Bytes = inputBytes;
@@ -29,11 +29,70 @@ namespace ProofOfCredit.Utils
             byte[] a = Bytes;
             byte[] b = bytesB.Bytes;
             byte[] ret = new byte[Math.Max(a.Length,b.Length)];
+            byte[] whoeverWasSmallest;
+            byte[] whoeverWasLargest;
+            if (a.Length < b.Length)
+            {
+                whoeverWasLargest = b;
+                whoeverWasSmallest = a;
+            }
+            else
+            {
+                whoeverWasLargest = a;
+                whoeverWasSmallest = b;
+            }
             List<byte> result = new List<byte>();
             int carry = 0;
-            for (int pos = 0; pos < ret.Length; ++pos)
+            //Sum until smallest one was used
+            for (int pos = 0; pos < whoeverWasSmallest.Length; ++pos)
             {
-                int sum = a[pos] + b[pos] + carry;
+                int sum = whoeverWasLargest[pos] + whoeverWasSmallest[pos] + carry;
+                ret[pos] = (byte)(sum & 0xFF);
+                carry = sum >> 8;
+            }
+            //Fill with the rest
+            for (int pos = whoeverWasSmallest.Length; pos < whoeverWasLargest.Length; ++pos)
+            {
+                int sum = whoeverWasLargest[pos] + carry;
+                ret[pos] = (byte)(sum & 0xFF);
+                carry = sum >> 8;
+            }
+            if (carry > 0)
+            {
+                Array.Resize<byte>(ref ret, ret.Length + 1);
+                ret[ret.Length - 1] = (byte)(carry);
+            }
+            return new ByteArray(ret);
+        }
+        public ByteArray Sum(byte[] b)
+        {
+            byte[] a = Bytes;
+            byte[] ret = new byte[Math.Max(a.Length, b.Length)];
+            byte[] whoeverWasSmallest;
+            byte[] whoeverWasLargest;
+            if (a.Length<b.Length)
+            {
+                whoeverWasLargest = b;
+                whoeverWasSmallest = a;
+            }
+            else
+            {
+                whoeverWasLargest = a;
+                whoeverWasSmallest = b;
+            }
+            List<byte> result = new List<byte>();
+            int carry = 0;
+            //Sum until smallest one was used
+            for (int pos = 0; pos < whoeverWasSmallest.Length; ++pos)
+            {
+                int sum = whoeverWasLargest[pos] + whoeverWasSmallest[pos] + carry;
+                ret[pos] = (byte)(sum & 0xFF);
+                carry = sum >> 8;
+            }
+            //Fill with the rest
+            for (int pos = whoeverWasSmallest.Length; pos < whoeverWasLargest.Length; ++pos)
+            {
+                int sum = whoeverWasLargest[pos] + carry;
                 ret[pos] = (byte)(sum & 0xFF);
                 carry = sum >> 8;
             }
@@ -47,11 +106,31 @@ namespace ProofOfCredit.Utils
         static public ByteArray Sum(byte[] a, byte[] b)
         {
             byte[] ret = new byte[Math.Max(a.Length, b.Length)];
+            byte[] whoeverWasSmallest;
+            byte[] whoeverWasLargest;
+            if (a.Length < b.Length)
+            {
+                whoeverWasLargest = b;
+                whoeverWasSmallest = a;
+            }
+            else
+            {
+                whoeverWasLargest = a;
+                whoeverWasSmallest = b;
+            }
             List<byte> result = new List<byte>();
             int carry = 0;
-            for (int pos = 0; pos < ret.Length; ++pos)
+            //Sum until smallest one was used
+            for (int pos = 0; pos < whoeverWasSmallest.Length; ++pos)
             {
-                int sum = a[pos] + b[pos] + carry;
+                int sum = whoeverWasLargest[pos] + whoeverWasSmallest[pos] + carry;
+                ret[pos] = (byte)(sum & 0xFF);
+                carry = sum >> 8;
+            }
+            //Fill with the rest
+            for (int pos = whoeverWasSmallest.Length; pos < whoeverWasLargest.Length; ++pos)
+            {
+                int sum = whoeverWasLargest[pos] + carry;
                 ret[pos] = (byte)(sum & 0xFF);
                 carry = sum >> 8;
             }

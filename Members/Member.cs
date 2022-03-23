@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProofOfCredit.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,46 @@ namespace ProofOfCredit.Members
 {
     class Member
     {
-        public byte[] Id;
-        public byte[] PasswordHash;
-        private List<Members.Member> ListaUsuarios;
-        private List<Members.Member> ListaMineros;
-        private List<Object> ListaIds; //TODO: Change to actual transaction id type
+        public ByteArray Id;
+        public ByteArray PasswordHash;
+        protected List<Members.Member> ListaUsuarios;
+        protected List<Members.Member> ListaMineros;
+        protected Dictionary<ByteArray, uint> CreditosDeMiembros;
+        protected List<Object> ListaIds; //TODO: Change to actual transaction id type
         public List<Block> Blockchain;
+        public uint Credit;
+        public Member()
+        {
+            Id = new ByteArray(BitConverter.GetBytes(2243211));
+            PasswordHash = new ByteArray(ASCIIEncoding.ASCII.GetBytes("password"));
+            ListaMineros = new List<Member>();
+            ListaUsuarios = new List<Member>();
+            Blockchain = new List<Block>();
+            Credit = 10;
+            Blockchain.Add(Block.GetGenesis());
+        }
+        public static uint GetLuckyDraws(uint credits)
+        {
+            if (credits <= 5 )
+            {
+                return 0;
+            }
+            else if (credits <= 10)
+            {
+                return 1;
+            }
+            else if (credits <= 20)
+            {
+                return 2;
+            }
+            else if (credits <= 50)
+            {
+                return 3;
+            }
+            else
+            {
+                return 5;
+            }
+        }
     }
 }

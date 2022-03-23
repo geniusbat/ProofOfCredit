@@ -1,5 +1,8 @@
-﻿using ProofOfCredit.Utils;
+﻿using ProofOfCredit.Members;
+using ProofOfCredit.NaughtyList;
+using ProofOfCredit.Utils;
 using System;
+using System.Collections.Generic;
 
 namespace ProofOfCredit
 {
@@ -7,13 +10,7 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-            byte[] a = BitConverter.GetBytes(253*10000);
-            ByteArray ab = new ByteArray(a);
-            ByteArray bb = new ByteArray(BitConverter.GetBytes(5*10));
-            ByteArray cb = ab.Sum(bb);
-            ab.PrettyPrint();
-            bb.PrettyPrint();
-            cb.PrettyPrint();
+
         }
     }
 }
