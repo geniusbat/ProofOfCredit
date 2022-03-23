@@ -11,10 +11,10 @@ namespace ProofOfCredit.Members
 {
     class Miner : Member
     {
-        private List<Transaction> TransactionsQueue;
+        private List<GenericTransaction> TransactionsQueue;
         public Miner() : base()
         {
-            TransactionsQueue = new List<Transaction>();
+            TransactionsQueue = new List<GenericTransaction>();
             while (true)
             {
                 MineNow();
@@ -84,7 +84,7 @@ namespace ProofOfCredit.Members
             blockchainToUse.Add(block);
             //TO DO: Communicate to network
         }
-        public void AddTransactionToQueue(Transaction tr)
+        public void AddTransactionToQueue(GenericTransaction tr)
         {
             if (tr.IsValid())
             {

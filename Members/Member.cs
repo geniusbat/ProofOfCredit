@@ -9,14 +9,14 @@ namespace ProofOfCredit.Members
 {
     class Member
     {
-        public ByteArray Id;
-        public ByteArray PasswordHash;
+        public ByteArray Id { get; protected set; }
+        protected ByteArray PasswordHash;
         protected List<Members.Member> ListaUsuarios;
         protected List<Members.Member> ListaMineros;
         protected Dictionary<ByteArray, uint> CreditosDeMiembros;
         protected List<Object> ListaIds; //TODO: Change to actual transaction id type
-        public List<Block> Blockchain;
-        public uint Credit;
+        protected List<Block> Blockchain;
+        public uint Credit { get; protected set; }
         public Member()
         {
             Id = new ByteArray(BitConverter.GetBytes(2243211));
@@ -26,6 +26,7 @@ namespace ProofOfCredit.Members
             Blockchain = new List<Block>();
             Credit = 10;
             Blockchain.Add(Block.GetGenesis());
+            CreditosDeMiembros = new Dictionary<ByteArray, uint>();
         }
         public static uint GetLuckyDraws(uint credits)
         {

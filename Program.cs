@@ -10,7 +10,8 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-
+            BlockViolationEntry e = new BlockViolationEntry();
+            Console.WriteLine(e.ToString());
         }
     }
 }

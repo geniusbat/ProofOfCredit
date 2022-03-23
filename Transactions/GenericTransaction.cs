@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace ProofOfCredit.Transactions
 {
-    class Transaction
+    class GenericTransaction
     {
-        public uint Id; //TODO: Change to a more appropiate data type
-        public ByteArray From;
-        public ByteArray To;
-        public uint Quantity;
-        public ByteArray Sign;
-        public Transaction()
+        public uint Id { get; protected set; } //TODO: Change to a more appropiate data type
+        public ByteArray From { get; protected set; }
+        public ByteArray To { get; protected set; }
+        public uint Quantity  { get; protected set; }
+        public ByteArray Sign  { get; protected set; }
+        public GenericTransaction()
         {
             //TODO: Fill randomly
             Id = 0;
             Sign = new ByteArray();
         }
-        public Transaction(uint id, ByteArray from, ByteArray to, uint quantity, ByteArray sign)
+        public GenericTransaction(uint id, ByteArray from, ByteArray to, uint quantity, ByteArray sign)
         {
             Id = id; From = from; To = to; Quantity = quantity; Sign = sign;
         }

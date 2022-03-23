@@ -143,12 +143,17 @@ namespace ProofOfCredit.Utils
         }
         public void PrettyPrint()
         {
-            Console.Write("[");
+            Console.WriteLine(ToString());
+        }
+        public override string ToString()
+        {
+            String ret = "[";
             foreach (byte item in Bytes)
             {
-                Console.Write(item+" ");
+                ret += item.ToString() + " ";
             }
-            Console.WriteLine("]");
+            ret += "]";
+            return ret;
         }
     }
 }

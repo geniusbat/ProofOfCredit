@@ -12,12 +12,12 @@ namespace ProofOfCredit
     class Block
     {
         public ulong Stamp;
-        public List<Transaction> Transactions;
+        public List<GenericTransaction> Transactions;
         public ByteArray PrevHash;
         public ByteArray MinerId;
         public ulong TimeGen;
         public byte PV;
-        public Block(List<Transaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash)
+        public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash)
         {
             Stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //Stamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             Transactions = listOfTransactions;
@@ -28,7 +28,7 @@ namespace ProofOfCredit
             PrevHash = prevHash;
         }
         //Never really use this constructor unless for generating the genesis block (and providing auxiliar functionality)
-        public Block(List<Transaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash, ulong stampGen)
+        public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash, ulong stampGen)
         {
             Stamp = (ulong)stampGen;
             Transactions = listOfTransactions;
@@ -50,7 +50,7 @@ namespace ProofOfCredit
                 sum = sum.Sum(BitConverter.GetBytes(TimeGen));
                 sum = sum.Sum(BitConverter.GetBytes(Stamp));
                 //Get sum of hashes from transactions
-                foreach (Transaction tr in Transactions)
+                foreach (GenericTransaction tr in Transactions)
                 {
                     sum = sum.Sum(tr.GetHash());
                 }
@@ -70,7 +70,7 @@ namespace ProofOfCredit
             {
                 ret = false;
             }
-            foreach (Transaction tr in Transactions)
+            foreach (GenericTransaction tr in Transactions)
             {
                 if (!(tr.IsValid())) {
                     ret = false;
@@ -92,7 +92,7 @@ namespace ProofOfCredit
         {
             DateTime originalDate = new DateTime(2021,8,7);
             ulong originalStamp = (ulong)((DateTimeOffset)originalDate).ToUnixTimeMilliseconds();
-            List<Transaction> noneTr = new List<Transaction>();
+            List<GenericTransaction> noneTr = new List<GenericTransaction>();
             byte[] originalId = new byte[32];
             for (int i = 0; i < originalId.Length; i++)
             {

@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace ProofOfCredit.NaughtyList
 {
-    class GenericNaughtyEntry
+    public enum EntryType
     {
-        public ByteArray BlockHash;
-        public EntryType Type;
-        public ByteArray ResposibleId;
-        public uint CreditLoss;
-        public enum EntryType
-        {
-            BlockViolation,
-            TransactionViolation,
-            NetworkSaturation,
-            Other
-        }
-        public ByteArray GetHash()
+        BlockViolation,
+        TransactionViolation,
+        NetworkSaturation,
+        Other
+    }
+    abstract class GenericNaughtyEntry
+    {
+        public ByteArray BlockHash { get; protected set; }
+        public EntryType Type { get; protected set; }
+        public ByteArray ResposibleId { get; protected set; }
+        public uint CreditLoss { get; protected set; }
+        public virtual ByteArray GetHash()
         {
             byte[] hash;
             using (SHA256 sha = SHA256.Create())
@@ -34,6 +34,14 @@ namespace ProofOfCredit.NaughtyList
                 hash = sha.ComputeHash(sum.Bytes);
             }
             return new ByteArray(hash);
+        }
+        public new virtual string ToString()
+        {
+            String ret = "";
+            ret += "PrevHash: "+BlockHash.ToString();
+            ret += " Type: " + Type.ToString();
+            ret += " Responsible: " + ResposibleId.ToString();
+            return ret;
         }
     }
     class BlockViolationEntry : GenericNaughtyEntry
@@ -58,7 +66,7 @@ namespace ProofOfCredit.NaughtyList
                 return;
             }
         }
-        public new ByteArray GetHash()
+        public override ByteArray GetHash()
         {
             byte[] hash;
             using (SHA256 sha = SHA256.Create())
@@ -81,19 +89,20 @@ namespace ProofOfCredit.NaughtyList
             ResposibleId = new ByteArray(BitConverter.GetBytes(672));
             CreditLoss = (uint)10;
         }
-        public uint TransactionId;
-        public int TransactionPosition;
+        public uint TransactionId { get; protected set; }
+        public int TransactionPosition { get; protected set; }
         public TransactionViolationEntry(ByteArray blockHash, uint trId, Block block ,ByteArray id)
         {
             BlockHash = blockHash;
             Type = EntryType.BlockViolation;
             ResposibleId = id;
             CreditLoss = (uint)10;
+            TransactionId = trId;
             //Get Transaction position
             TransactionPosition = -4;
             for (int i = 0; i < block.Transactions.Count; i++)
             {
-                Transaction tr = block.Transactions[i];
+                GenericTransaction tr = block.Transactions[i];
                 if (tr.Id == trId)
                 {
                     TransactionPosition = i;
@@ -113,7 +122,7 @@ namespace ProofOfCredit.NaughtyList
                 return;
             }
         }
-        public new ByteArray GetHash()
+        public override ByteArray GetHash()
         {
             byte[] hash;
             using (SHA256 sha = SHA256.Create())
