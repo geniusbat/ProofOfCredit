@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +17,15 @@ namespace ProofOfCredit.Transactions
         public ByteArray Sign  { get; protected set; }
         public GenericTransaction()
         {
-            //TODO: Fill randomly
-            Id = 0;
+            Random rd = new Random();
+            Id = (uint)rd.Next(0,1000);
+            From = new ByteArray();
+            To = new ByteArray();
+            From.FillRandomly(16);
+            To.FillRandomly(16);
+            Quantity = (uint)rd.Next(1, 10);
             Sign = new ByteArray();
+            Sign.FillRandomly(20);
         }
         public GenericTransaction(uint id, ByteArray from, ByteArray to, uint quantity, ByteArray sign)
         {
@@ -26,13 +33,27 @@ namespace ProofOfCredit.Transactions
         }
         public ByteArray GetHash()
         {
-            //TODO
-            return new ByteArray(BitConverter.GetBytes(Id + Quantity));
+            byte[] hash;
+            using (SHA256 sha = SHA256.Create())
+            {
+                ByteArray sum = From;
+                sum = sum.Sum(To);
+                sum = sum.Sum(BitConverter.GetBytes(Id));
+                sum = sum.Sum(Sign);
+                sum = sum.Sum(BitConverter.GetBytes(Quantity));
+                hash = sha.ComputeHash(sum.Bytes);
+            }
+            return new ByteArray(hash);
         }
         public bool IsValid ()
         {
             //TODO
             return true;
+        }
+        public override String ToString()
+        {
+            String ret = Id.ToString() +" From:"+ From.ToString() +" To:"+ To.ToString() +" Quantity:"+ Quantity.ToString() +" Sign:"+ Sign.ToString();
+            return ret;
         }
     }
 }

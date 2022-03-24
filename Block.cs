@@ -21,6 +21,7 @@ namespace ProofOfCredit
         {
             Stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //Stamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             Transactions = listOfTransactions;
+            Console.WriteLine(Transactions.Count());
             MinerId = miner;
             TimeGen = timeOfCreation;
             PV = currentPv;
@@ -100,6 +101,19 @@ namespace ProofOfCredit
             }
             byte[] prevHash = new byte[32];
             return new Block(noneTr, new ByteArray(originalId), 0, originalStamp, new ByteArray(prevHash), originalStamp);
+        }
+        public override string ToString()
+        {
+            String ret = "";
+            ret += "Hash: " + GetHash().ToString();
+            ret += "\nMiner: " + MinerId.ToString();
+            ret += "\nStamp: " + Stamp.ToString();
+            ret += "\nTransactions: ";
+            foreach(GenericTransaction tr in Transactions)
+            {
+                ret += tr.ToString()+"\n";
+            }
+            return ret;
         }
     }
 }

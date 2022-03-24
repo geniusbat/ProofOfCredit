@@ -12,17 +12,24 @@ namespace ProofOfCredit.Utils
         public int Length;
         public ByteArray(byte[] inputBytes)
         {
-            this.Bytes = inputBytes;
-            this.Length = inputBytes.Length;
+            Bytes = inputBytes;
+            Length = inputBytes.Length;
         }
         public ByteArray()
         {
 
         }
+        public void FillRandomly(int maxLength)
+        {
+            Bytes = new byte[maxLength];
+            Random rd = new Random();
+            rd.NextBytes(Bytes);
+            Length = Bytes.Length;
+        }
         public void SetBytes(byte[] inputBytes)
         {
-            this.Bytes = inputBytes;
-            this.Length = inputBytes.Length;
+            Bytes = inputBytes;
+            Length = inputBytes.Length;
         }
         public ByteArray Sum(ByteArray bytesB)
         {

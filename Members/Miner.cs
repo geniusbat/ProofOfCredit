@@ -12,9 +12,12 @@ namespace ProofOfCredit.Members
     class Miner : Member
     {
         private List<GenericTransaction> TransactionsQueue;
+        private bool canMine;
         public Miner() : base()
         {
             TransactionsQueue = new List<GenericTransaction>();
+            FillWithRandomTransactions();
+            canMine = true;
             while (true)
             {
                 MineNow();
@@ -28,7 +31,11 @@ namespace ProofOfCredit.Members
         //Receives time to try the generation in the same unit as block stamp (rn is ms), time must be equal or larger than the block stamp.
         private void Mine(ulong time)
         {
-            Block lastBlock = Blockchain[Blockchain.Count()-1];
+            if (!canMine)
+            {
+                return;
+            }
+            Block lastBlock = Blockchain.LastBlock();
             //Console.Write("Mining on block hash: "); lastBlock.GetHash().PrettyPrint();
             ulong blockStamp = lastBlock.Stamp;
             if (time >= blockStamp)
@@ -54,34 +61,34 @@ namespace ProofOfCredit.Members
                         luckyDraws.Add(BitConverter.ToUInt32(aux,0));
                     }
                 }
-                /*
-                Console.Write("Lucky draws:");
-                foreach (uint luckyDraw in luckyDraws)
-                {
-                    Console.Write(luckyDraw.ToString()+" ");
-                }
-                Console.WriteLine(); */
                 //Get lucky value from block
                 uint luckyValue = lastBlock.GetLuckyValue();
-                //Console.WriteLine("Lucky value and easing: "+(luckyValue + easing).ToString());
                 //Check if luckyValue is equal or bigger to any lucky draw
                 for (int i = 0; i < luckyDraws.Count(); i++)
                 {
                     uint luckyDraw = luckyDraws[0];
                     if (luckyValue+easing>=luckyDraw)
                     {
+                        canMine = false;
                         Console.WriteLine("Won the lottery!");
+                        Console.WriteLine("Lucky value: " + luckyValue.ToString());
+                        Console.WriteLine("Easing: " + easing.ToString());
+                        Console.WriteLine("Lucky draw: " + luckyDraw.ToString()); ;
                         WonLottery(luckyDraws,i,time,Blockchain);
                         break;
                     }
                 }
             }
         }
-        private void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, List<Block> blockchainToUse)
+        private void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, Blockchain blockchainToUse)
         {
-            Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse[blockchainToUse.Count - 1].GetHash());
-            TransactionsQueue.Clear();
+            Console.WriteLine("Current blockchain: ");
+            blockchainToUse.PrettyPrint();
+            Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
             blockchainToUse.Add(block);
+            Console.WriteLine("New blockchain: ");
+            blockchainToUse.PrettyPrint();
+            AddBlockchainCandidate(blockchainToUse);
             //TO DO: Communicate to network
         }
         public void AddTransactionToQueue(GenericTransaction tr)
@@ -92,6 +99,48 @@ namespace ProofOfCredit.Members
                 {
                     TransactionsQueue.Add(tr);
                 }
+            }
+        }
+        public override void CheckToUpdateOficialChain()
+        {
+            //Right now just get largest chain
+            Blockchain best = null;
+            foreach (Blockchain chain in ChainCandidates)
+            {
+                if ((best == null) || (chain.Count() > best.Count()))
+                {
+                    best = chain;
+                }
+            }
+            /*
+            //Remove transactions from the queue that were added
+            foreach (Block bl in Blockchain.Chain)
+            {
+                foreach(GenericTransaction tr in TransactionsQueue.ToList())
+                {
+                    if (bl.Transactions.Contains(tr))
+                    {
+                        TransactionsQueue.Remove(tr);
+                    }
+                }
+            }
+            Console.WriteLine("New blockchain: ");
+            Blockchain.PrettyPrint();
+            FillWithRandomTransactions();
+            canMine = true;
+            */
+            TransactionsQueue.Clear();
+            FillWithRandomTransactions();
+            canMine = true;
+        }
+        private void FillWithRandomTransactions()
+        {
+            Random rd = new Random();
+            int aux = rd.Next(1, 5);
+            for (int i = 0; i < aux; i++)
+            {
+                GenericTransaction tr = new GenericTransaction();
+                TransactionsQueue.Add(tr);
             }
         }
     }

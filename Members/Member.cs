@@ -15,17 +15,20 @@ namespace ProofOfCredit.Members
         protected List<Members.Member> ListaMineros;
         protected Dictionary<ByteArray, uint> CreditosDeMiembros;
         protected List<Object> ListaIds; //TODO: Change to actual transaction id type
-        protected List<Block> Blockchain;
+        protected Blockchain Blockchain;
+        protected List<Blockchain> ChainCandidates;
         public uint Credit { get; protected set; }
         public Member()
         {
-            Id = new ByteArray(BitConverter.GetBytes(2243211));
+            Random rd = new Random();
+            Id = new ByteArray(BitConverter.GetBytes(rd.Next(1,2000)));
             PasswordHash = new ByteArray(ASCIIEncoding.ASCII.GetBytes("password"));
             ListaMineros = new List<Member>();
             ListaUsuarios = new List<Member>();
-            Blockchain = new List<Block>();
+            Blockchain = new Blockchain();
+            ListaIds = new List<object>();
+            ChainCandidates = new List<Blockchain>();
             Credit = 10;
-            Blockchain.Add(Block.GetGenesis());
             CreditosDeMiembros = new Dictionary<ByteArray, uint>();
         }
         public static uint GetLuckyDraws(uint credits)
@@ -49,6 +52,33 @@ namespace ProofOfCredit.Members
             else
             {
                 return 5;
+            }
+        }
+        public void AddBlockchainCandidate(Blockchain candidate)
+        {
+            if (candidate.IsValid())
+            {
+                ChainCandidates.Add(candidate);
+            }
+            //Update oficial
+            CheckToUpdateOficialChain();
+        }
+        //TODO
+        public void AddBlockchainCandidate(Block newBlock)
+        {
+
+        }
+        //TODO
+        public virtual void CheckToUpdateOficialChain()
+        {
+            //Right now just get largest chain
+            Blockchain best = null;
+            foreach (Blockchain chain in ChainCandidates)
+            {
+                if ((best==null) || (chain.Count()>best.Count()))
+                {
+                    best = chain;
+                }
             }
         }
     }
