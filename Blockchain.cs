@@ -55,7 +55,7 @@ namespace ProofOfCredit
             String ret = "";
             foreach (Block bl in Chain)
             {
-                ret += bl.ToString() + "\n------------------------------------\n";
+                ret += "Block: " + bl.ToString() + "\n------------------------------------\n";
             }
             Console.WriteLine(ret);
         }

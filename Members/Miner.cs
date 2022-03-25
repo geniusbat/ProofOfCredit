@@ -73,7 +73,7 @@ namespace ProofOfCredit.Members
                         Console.WriteLine("Won the lottery!");
                         Console.WriteLine("Lucky value: " + luckyValue.ToString());
                         Console.WriteLine("Easing: " + easing.ToString());
-                        Console.WriteLine("Lucky draw: " + luckyDraw.ToString()); ;
+                        Console.WriteLine("Lucky draw: " + luckyDraw.ToString()+"\n");
                         WonLottery(luckyDraws,i,time,Blockchain);
                         break;
                     }
@@ -82,11 +82,9 @@ namespace ProofOfCredit.Members
         }
         private void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, Blockchain blockchainToUse)
         {
-            Console.WriteLine("Current blockchain: ");
-            blockchainToUse.PrettyPrint();
             Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
             blockchainToUse.Add(block);
-            Console.WriteLine("New blockchain: ");
+            Console.WriteLine("New blockchain length is: "+blockchainToUse.Count());
             blockchainToUse.PrettyPrint();
             AddBlockchainCandidate(blockchainToUse);
             //TO DO: Communicate to network
