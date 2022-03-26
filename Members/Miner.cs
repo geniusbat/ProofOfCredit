@@ -12,26 +12,32 @@ namespace ProofOfCredit.Members
     class Miner : Member
     {
         private List<GenericTransaction> TransactionsQueue;
-        private bool canMine;
+        protected bool CanMine;
         public Miner() : base()
         {
             TransactionsQueue = new List<GenericTransaction>();
             FillWithRandomTransactions();
-            canMine = true;
-            while (true)
-            {
-                MineNow();
-            }
+            CanMine = true;
+            //while (true)
+            //{
+            //    MineNow();
+            //}
         }
-        private void MineNow()
+        //Auxiliar method for initializing all miners at once
+        public override void Init()
+        {
+
+        }
+        public void MineNow()
         {
             ulong now = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             Mine(now);
         }
         //Receives time to try the generation in the same unit as block stamp (rn is ms), time must be equal or larger than the block stamp.
-        private void Mine(ulong time)
+        protected void Mine(ulong time)
         {
-            if (!canMine)
+            Console.WriteLine(CanMine);
+            if (!CanMine)
             {
                 return;
             }
@@ -69,7 +75,7 @@ namespace ProofOfCredit.Members
                     uint luckyDraw = luckyDraws[0];
                     if (luckyValue+easing>=luckyDraw)
                     {
-                        canMine = false;
+                        CanMine = false;
                         Console.WriteLine("Won the lottery!");
                         Console.WriteLine("Lucky value: " + luckyValue.ToString());
                         Console.WriteLine("Easing: " + easing.ToString());
@@ -80,7 +86,7 @@ namespace ProofOfCredit.Members
                 }
             }
         }
-        private void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, Blockchain blockchainToUse)
+        protected void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, Blockchain blockchainToUse)
         {
             Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
             blockchainToUse.Add(block);
@@ -110,6 +116,7 @@ namespace ProofOfCredit.Members
                     best = chain;
                 }
             }
+            //TODO:
             /*
             //Remove transactions from the queue that were added
             foreach (Block bl in Blockchain.Chain)
@@ -129,7 +136,7 @@ namespace ProofOfCredit.Members
             */
             TransactionsQueue.Clear();
             FillWithRandomTransactions();
-            canMine = true;
+            CanMine = true;
         }
         private void FillWithRandomTransactions()
         {
