@@ -58,15 +58,16 @@ namespace ProofOfCredit
             }
             return new ByteArray(hash);
         }
-        //TODO
+        //Better use the blockchain class "IsBlockValid"
         public bool IsValid()
         {
             bool ret = true;
-            if (Transactions.Count==0)
+            //Transactions must'nt be empty unless genesis block
+            if ((Transactions.Count==0)&!(MinerId.Equals(Block.GetGenesis().MinerId)))
             {
                 ret = false;
             }
-            else if (TimeGen>=Stamp)
+            else if (!(TimeGen.CompareTo(Stamp)>=0))
             {
                 ret = false;
             }
@@ -105,6 +106,7 @@ namespace ProofOfCredit
         {
             String ret = "";
             ret += "Hash: " + GetHash().ToString();
+            ret += "\nPrevious: " + PrevHash.ToString();
             ret += "\nMiner: " + MinerId.ToString();
             ret += "\nStamp: " + Stamp.ToString();
             ret += "\nTransactions: \n";
@@ -113,6 +115,10 @@ namespace ProofOfCredit
                 ret += tr.ToString()+"\n";
             }
             return ret;
+        }
+        public bool Equals(Block bl)
+        {
+            return GetHash() == bl.GetHash();
         }
     }
 }

@@ -162,5 +162,25 @@ namespace ProofOfCredit.Utils
             ret += "]";
             return ret;
         }
+        public bool Equals(ByteArray b)
+        {
+            if (b.Length!=Length)
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 0; i < Length; i++)
+                {
+                    byte aB = Bytes[i];
+                    byte bB = b.Bytes[i];
+                    if (aB!=bB)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
     }
 }
