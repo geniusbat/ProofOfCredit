@@ -15,22 +15,22 @@ namespace ProofOfCredit.NaughtyList
         public ByteArray PrevHash;
         public NaughtyListBlock()
         {
-            PrevHash = GetGenesis().GetHash();
+            PrevHash = GetGenesis().GetHash().Copy();
             DayStamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); //TODO: Modulate to unix time from the beginning of the day
             Data = new List<GenericNaughtyEntry>();
         }
         public NaughtyListBlock(ByteArray prevHash, List<GenericNaughtyEntry> data)
         {
             DayStamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); //TODO: Modulate to unix time from the beginning of the day
-            PrevHash = prevHash;
-            Data = data;
+            PrevHash = prevHash.Copy();
+            Data = new List<GenericNaughtyEntry>(data);
         }
         //Only use to create genesis block
         private NaughtyListBlock(ByteArray prevHash, List<GenericNaughtyEntry> data, ulong stamp)
         {
             DayStamp = stamp;
-            PrevHash = prevHash;
-            Data = data;
+            PrevHash = prevHash.Copy();
+            Data = new List<GenericNaughtyEntry>(data);
         }
         public ByteArray GetHash()
         {

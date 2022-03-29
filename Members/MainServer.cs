@@ -10,6 +10,8 @@ namespace ProofOfCredit
 {
     class MainServer : Miner 
     {
+        //Previous PVs and their corresponding dates (as unix milisecond time) (Current PV must be +1 to the latests PV in this list).
+        Dictionary<int, List<ulong>> PvDates;
         public MainServer() : base()
         {
             CanMine = false;

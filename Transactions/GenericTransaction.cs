@@ -55,5 +55,17 @@ namespace ProofOfCredit.Transactions
             String ret = Id.ToString() +" From:"+ From.ToString() +" To:"+ To.ToString() +" Quantity:"+ Quantity.ToString() +" Sign:"+ Sign.ToString();
             return ret;
         }
+        public bool Equals(GenericTransaction tr)
+        {
+            if ((Id==tr.Id)&(From.Equals(tr.From)&(To.Equals(tr.To))&(Quantity==tr.Quantity)&(Sign.Equals(tr.Sign))))
+            {
+                return true;
+            }
+            return false;
+        }
+        public GenericTransaction Copy()
+        {
+            return new GenericTransaction(Id,From.Copy(),To.Copy(), Quantity,Sign.Copy());
+        }
     }
 }

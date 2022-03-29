@@ -55,9 +55,9 @@ namespace ProofOfCredit.NaughtyList
         }
         public BlockViolationEntry(ByteArray blockHash, Block block, ByteArray id)
         {
-            BlockHash = blockHash;
+            BlockHash = blockHash.Copy();
             Type = EntryType.BlockViolation;
-            ResposibleId = id;
+            ResposibleId = id.Copy();
             CreditLoss = 10;
             //Make sure the given block is invalid
             if (!(block.IsValid()))
@@ -93,9 +93,9 @@ namespace ProofOfCredit.NaughtyList
         public int TransactionPosition { get; protected set; }
         public TransactionViolationEntry(ByteArray blockHash, uint trId, Block block ,ByteArray id)
         {
-            BlockHash = blockHash;
+            BlockHash = blockHash.Copy();
             Type = EntryType.BlockViolation;
-            ResposibleId = id;
+            ResposibleId = id.Copy();
             CreditLoss = 10;
             TransactionId = trId;
             //Get Transaction position

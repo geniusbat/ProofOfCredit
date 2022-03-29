@@ -22,6 +22,7 @@ namespace ProofOfCredit.Members
         protected Blockchain Blockchain;
         protected List<Blockchain> ChainCandidates;
         protected List<NaughtyListBlock> NaughtyList;
+        protected byte CurrentPV;
         public uint Credit { get; protected set; }
         public Member()
         {
@@ -36,6 +37,7 @@ namespace ProofOfCredit.Members
             ChainCandidates = new List<Blockchain>();
             Credit = 10;
             CreditsPerMember = new Dictionary<ByteArray, int>();
+            CurrentPV = BitConverter.GetBytes(0)[0];
         }
         public virtual void Init()
         {
@@ -104,29 +106,7 @@ namespace ProofOfCredit.Members
             }
             CreditsPerMember = creditScores;
         }
-        public static uint GetLuckyDraws(uint credits)
-        {
-            if (credits <= 5 )
-            {
-                return 0;
-            }
-            else if (credits <= 10)
-            {
-                return 1;
-            }
-            else if (credits <= 20)
-            {
-                return 2;
-            }
-            else if (credits <= 50)
-            {
-                return 3;
-            }
-            else
-            {
-                return 5;
-            }
-        }
+        //Deprecated, better use version with block argument.
         public void AddBlockchainCandidate(Blockchain candidate)
         {
             if (candidate.IsValid())
@@ -136,10 +116,75 @@ namespace ProofOfCredit.Members
             //Update oficial
             CheckToUpdateOficialChain();
         }
-        //TODO
-        public void AddBlockchainCandidate(Block newBlock)
+        public virtual void AddBlockchainCandidate(Block newBlock)
         {
-
+            if (newBlock.IsValid())
+            {
+                ByteArray prevHash = newBlock.PrevHash;
+                //Look for blockchain candidate whose lasts block is equal to the new's block previous hash
+                foreach (Blockchain blockchain in ChainCandidates)
+                {
+                    if (blockchain.LastBlock().GetHash().Equals(prevHash))
+                    {
+                        //Make sure new block is younger than lasts block
+                        if (blockchain.LastBlock().Stamp<=newBlock.TimeGen)
+                        {
+                            blockchain.Add(newBlock);
+                            //Make sure resulting blockchain is valid, if not revert to previous state
+                            if (blockchain.IsValid())
+                            {
+                                CheckToUpdateOficialChain();
+                                //Increase miner's credit
+                                ByteArray id = newBlock.MinerId;
+                                if (CreditsPerMember.ContainsKey(id))
+                                {
+                                    CreditsPerMember[id] += 1;
+                                }
+                                else
+                                {
+                                    CreditsPerMember[id] = 1;
+                                }
+                                return;
+                            }
+                            else
+                            {
+                                blockchain.Chain.Remove(newBlock);
+                            }
+                        }
+                    }
+                }
+                //If it exited the foreach loop it means it wasn't found inside the candidates
+                //Check if newBlock is an extension of the current chain
+                if (Blockchain.LastBlock().GetHash().Equals(prevHash))
+                {
+                    if (Blockchain.LastBlock().Stamp <= newBlock.TimeGen)
+                    {
+                        Blockchain.Add(newBlock);
+                        //Make sure resulting blockchain is valid, if not revert to previous state
+                        if (Blockchain.IsValid())
+                        {
+                            ChainCandidates.Add(Blockchain);
+                            CheckToUpdateOficialChain();
+                            //Increase miner's credit
+                            ByteArray id = newBlock.MinerId;
+                            if (CreditsPerMember.ContainsKey(id))
+                            {
+                                CreditsPerMember[id] += 1;
+                            }
+                            else
+                            {
+                                CreditsPerMember[id] = 1;
+                            }
+                            return;
+                        }
+                        else
+                        {
+                            Blockchain.Chain.Remove(newBlock);
+                        }
+                    }
+                }
+            }
+            //If here, block was invalid
         }
         //TODO
         public virtual void CheckToUpdateOficialChain()
@@ -158,6 +203,89 @@ namespace ProofOfCredit.Members
         protected void ViolationFound(Block invalidBlock)
         {
             return;
+        }
+        //Static calls
+        public uint GetLuckyDraws(uint credits)
+        {
+            return GetLuckyDraws(credits, CurrentPV);
+        }
+        public static uint GetLuckyDraws(uint credits, byte pv)
+        {
+            int pvNum = (int)pv;
+            switch (pvNum)
+            {
+                case 0:
+                    if (credits <= 5)
+                    {
+                        return 0;
+                    }
+                    else if (credits <= 10)
+                    {
+                        return 1;
+                    }
+                    else if (credits <= 20)
+                    {
+                        return 2;
+                    }
+                    else if (credits <= 50)
+                    {
+                        return 3;
+                    }
+                    else
+                    {
+                        return 5;
+                    }
+                default:
+                    if (credits <= 5)
+                    {
+                        return 0;
+                    }
+                    else if (credits <= 10)
+                    {
+                        return 1;
+                    }
+                    else if (credits <= 20)
+                    {
+                        return 2;
+                    }
+                    else if (credits <= 50)
+                    {
+                        return 3;
+                    }
+                    else
+                    {
+                        return 5;
+                    }
+            }
+        }
+        public bool CanMemberBranchOff(uint credits)
+        {
+            return CanMemberBranchOff(credits, CurrentPV);
+        }
+        public static bool CanMemberBranchOff(uint credits, byte pv)
+        {
+            int pvNum = (int)pv;
+            switch (pvNum)
+            {
+                case 0:
+                    if (credits > 20)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                default:
+                    if (credits > 20)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+            }
         }
     }
 }

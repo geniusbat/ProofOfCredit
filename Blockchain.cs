@@ -25,7 +25,6 @@ namespace ProofOfCredit
                     return false;
                 }
             }
-            //TODO: Check for prevhash
             return true;
         }
         public bool IsBlockValid(int blockPos)

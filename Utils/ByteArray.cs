@@ -182,5 +182,9 @@ namespace ProofOfCredit.Utils
                 return true;
             }
         }
+        public ByteArray Copy()
+        {
+            return new ByteArray((Byte[])Bytes.Clone());
+        }
     }
 }

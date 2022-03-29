@@ -20,23 +20,23 @@ namespace ProofOfCredit
         public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash)
         {
             Stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //Stamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            Transactions = listOfTransactions;
-            MinerId = miner;
+            Transactions = new List<GenericTransaction>(listOfTransactions);
+            MinerId = miner.Copy();
             TimeGen = timeOfCreation;
             PV = currentPv;
             TimeGen = timeOfCreation;
-            PrevHash = prevHash;
+            PrevHash = prevHash.Copy();
         }
         //Never really use this constructor unless for generating the genesis block (and providing auxiliar functionality)
         public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash, ulong stampGen)
         {
             Stamp = (ulong)stampGen;
-            Transactions = listOfTransactions;
-            MinerId = miner;
+            Transactions = new List<GenericTransaction>(listOfTransactions);
+            MinerId = miner.Copy();
             TimeGen = timeOfCreation;
             PV = currentPv;
             TimeGen = timeOfCreation;
-            PrevHash = prevHash;
+            PrevHash = prevHash.Copy();
         }
         public ByteArray GetHash()
         {
@@ -67,7 +67,8 @@ namespace ProofOfCredit
             {
                 ret = false;
             }
-            else if (!(TimeGen.CompareTo(Stamp)>=0))
+            //Time of generation must be earlier or equal than time of block creation
+            else if (!(TimeGen.CompareTo(Stamp)<=0))
             {
                 ret = false;
             }

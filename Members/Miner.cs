@@ -36,7 +36,6 @@ namespace ProofOfCredit.Members
         //Receives time to try the generation in the same unit as block stamp (rn is ms), time must be equal or larger than the block stamp.
         protected void Mine(ulong time)
         {
-            Console.WriteLine(CanMine);
             if (!CanMine)
             {
                 return;
@@ -75,7 +74,7 @@ namespace ProofOfCredit.Members
                     uint luckyDraw = luckyDraws[0];
                     if (luckyValue+easing>=luckyDraw)
                     {
-                        CanMine = false;
+                        Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
                         Console.WriteLine("Won the lottery!");
                         Console.WriteLine("Lucky value: " + luckyValue.ToString());
                         Console.WriteLine("Easing: " + easing.ToString());
@@ -88,12 +87,15 @@ namespace ProofOfCredit.Members
         }
         protected void WonLottery(List<uint> luckyDraws, int winningDraw, ulong time, Blockchain blockchainToUse)
         {
+            CanMine = false;
             Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
-            blockchainToUse.Add(block);
-            Console.WriteLine("New blockchain length is: "+blockchainToUse.Count());
-            blockchainToUse.PrettyPrint();
-            AddBlockchainCandidate(blockchainToUse);
-            //TO DO: Communicate to network
+            Console.WriteLine("New block generated will be: \n"+ block);
+            AddBlockchainCandidate(block);
+            //Communicate to network
+            foreach(Miner miner in MinersList)
+            {
+                miner.AddBlockchainCandidate(block);
+            }
         }
         public void AddTransactionToQueue(GenericTransaction tr)
         {
@@ -107,7 +109,8 @@ namespace ProofOfCredit.Members
         }
         public override void CheckToUpdateOficialChain()
         {
-            //Right now just get largest chain
+            CanMine = false;
+            //Right now just get largest chain. TODO
             Blockchain best = null;
             foreach (Blockchain chain in ChainCandidates)
             {
@@ -116,25 +119,19 @@ namespace ProofOfCredit.Members
                     best = chain;
                 }
             }
-            //TODO:
-            /*
+            Blockchain = best;
             //Remove transactions from the queue that were added
+            List<GenericTransaction> intersection = new List<GenericTransaction>();
             foreach (Block bl in Blockchain.Chain)
             {
-                foreach(GenericTransaction tr in TransactionsQueue.ToList())
-                {
-                    if (bl.Transactions.Contains(tr))
-                    {
-                        TransactionsQueue.Remove(tr);
-                    }
-                }
+                intersection.AddRange(TransactionsQueue.Intersect(bl.Transactions));
             }
-            Console.WriteLine("New blockchain: ");
-            Blockchain.PrettyPrint();
-            FillWithRandomTransactions();
-            canMine = true;
-            */
-            TransactionsQueue.Clear();
+            foreach (GenericTransaction tr in intersection)
+            {
+                TransactionsQueue.Remove(tr);
+            }
+            Console.WriteLine("===========================================================================================\nNew blockchain:\n"+Blockchain);
+            //Blockchain.PrettyPrint();
             FillWithRandomTransactions();
             CanMine = true;
         }

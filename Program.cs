@@ -13,13 +13,12 @@ namespace ProofOfCredit
             //Miner m = new Miner();
             MainServer server = new MainServer();
             Miner m = new Miner();
-            Blockchain c = new Blockchain();
-            List<Transactions.GenericTransaction> l = new List<Transactions.GenericTransaction>();
-            l.Add(new Transactions.GenericTransaction());
-            Block b = new Block(l, new ByteArray(BitConverter.GetBytes(421)), BitConverter.GetBytes(0)[0], (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), c.Chain[0].GetHash());
-            c.Add(b);
-            Console.WriteLine(c);
-            Console.WriteLine(c.IsValid());
+            Console.WriteLine("After:\n"+bc);
+            /*
+            while(true)
+            {
+                m.MineNow();
+            }*/
         }
         static void AllMinersMine(List<Miner> miners)
         {
