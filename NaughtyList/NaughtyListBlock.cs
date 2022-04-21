@@ -55,5 +55,14 @@ namespace ProofOfCredit.NaughtyList
             NaughtyListBlock bl = new NaughtyListBlock(new ByteArray(BitConverter.GetBytes(0)), new List<GenericNaughtyEntry>(), stamp);
             return bl;
         }
+        public override string ToString()
+        {
+            string ret = "";
+            foreach (GenericNaughtyEntry entry in Data)
+            {
+                ret += entry.ToString() + "\n";
+            }
+            return ret;
+        }
     }
 }

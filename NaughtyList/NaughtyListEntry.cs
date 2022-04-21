@@ -35,10 +35,10 @@ namespace ProofOfCredit.NaughtyList
             }
             return new ByteArray(hash);
         }
-        public new virtual string ToString()
+        public override string ToString()
         {
-            String ret = "";
-            ret += "PrevHash: "+BlockHash.ToString();
+            string ret = "";
+            ret += "BlockHash: "+BlockHash.ToString();
             ret += " Type: " + Type.ToString();
             ret += " Responsible: " + ResposibleId.ToString();
             return ret;
@@ -55,6 +55,7 @@ namespace ProofOfCredit.NaughtyList
         }
         public BlockViolationEntry(ByteArray blockHash, Block block, ByteArray id)
         {
+            Console.WriteLine(blockHash);
             BlockHash = blockHash.Copy();
             Type = EntryType.BlockViolation;
             ResposibleId = id.Copy();

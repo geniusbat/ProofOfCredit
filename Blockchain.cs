@@ -95,7 +95,7 @@ namespace ProofOfCredit
                 int blockPos = Chain.IndexOf(bl);
                 //This will ret=false if blockPos = 0
                 //Just check previous pos
-                if ((blockPos != 0) | (Chain[blockPos - 1].GetHash() == Chain[blockPos].PrevHash))
+                if ((blockPos == 0) | (Chain[blockPos - 1].GetHash().Equals(Chain[blockPos].PrevHash)))
                 {
                     ret = true;
                 }

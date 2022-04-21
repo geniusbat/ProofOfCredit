@@ -13,12 +13,7 @@ namespace ProofOfCredit
             //Miner m = new Miner();
             MainServer server = new MainServer();
             Miner m = new Miner();
-            Console.WriteLine("After:\n"+bc);
-            /*
-            while(true)
-            {
-                m.MineNow();
-            }*/
+            //m.Server = server;
         }
         static void AllMinersMine(List<Miner> miners)
         {

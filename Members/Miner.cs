@@ -96,6 +96,10 @@ namespace ProofOfCredit.Members
             {
                 miner.AddBlockchainCandidate(block);
             }
+            if (Server!=null)
+            {
+                Server.AddBlockchainCandidate(block);
+            }
         }
         public void AddTransactionToQueue(GenericTransaction tr)
         {
@@ -110,16 +114,35 @@ namespace ProofOfCredit.Members
         public override void CheckToUpdateOficialChain()
         {
             CanMine = false;
-            //Right now just get largest chain. TODO
-            Blockchain best = null;
-            foreach (Blockchain chain in ChainCandidates)
+            int[] chainCredits = new int[ChainCandidates.Count()];
+            for (int i = 0; i < ChainCandidates.Count(); i++)
             {
-                if ((best == null) || (chain.Count() > best.Count()))
+                Blockchain chain = ChainCandidates[i];
+                int sum = 0;
+                foreach (Block bl in chain.Chain)
                 {
-                    best = chain;
+                    if (CreditsPerMember.ContainsKey(bl.MinerId))
+                    {
+                        sum += CreditsPerMember[bl.MinerId];
+                    }
                 }
+                chainCredits[i] = sum;
             }
-            Blockchain = best;
+            //make sure there were candidates being considered
+            if (chainCredits.Length > 0)
+            {
+                int posOfBest = 0;
+                for (int i = 0; i < chainCredits.Length; i++)
+                {
+                    if (chainCredits[posOfBest] > chainCredits[i])
+                    {
+                        posOfBest = i;
+                    }
+                }
+                //The chain with the highest credit was found, make it the official one
+                Blockchain = ChainCandidates[posOfBest];
+                ChainCandidates.Clear();
+            }
             //Remove transactions from the queue that were added
             List<GenericTransaction> intersection = new List<GenericTransaction>();
             foreach (Block bl in Blockchain.Chain)
@@ -131,7 +154,6 @@ namespace ProofOfCredit.Members
                 TransactionsQueue.Remove(tr);
             }
             Console.WriteLine("===========================================================================================\nNew blockchain:\n"+Blockchain);
-            //Blockchain.PrettyPrint();
             FillWithRandomTransactions();
             CanMine = true;
         }

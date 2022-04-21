@@ -11,7 +11,7 @@ namespace ProofOfCredit.Members
     class Member
     {
         //Helper variable for local tests
-        public MainServer server = null;
+        public MainServer Server = null;
         public ByteArray Id { get; protected set; }
         //TODO: Add IP property
         protected ByteArray PasswordHash;
@@ -19,7 +19,7 @@ namespace ProofOfCredit.Members
         protected List<Miner> MinersList;
         protected Dictionary<ByteArray, int> CreditsPerMember;
         protected List<Object> ListaIds; //TODO: Change to actual transaction id type
-        protected Blockchain Blockchain;
+        protected Blockchain Blockchain; 
         protected List<Blockchain> ChainCandidates;
         protected List<NaughtyListBlock> NaughtyList;
         protected byte CurrentPV;
@@ -33,6 +33,7 @@ namespace ProofOfCredit.Members
             UsersList = new List<User>();
             Blockchain = new Blockchain();
             NaughtyList = new List<NaughtyListBlock>();
+            NaughtyList.Add(NaughtyListBlock.GetGenesis());
             ListaIds = new List<object>();
             ChainCandidates = new List<Blockchain>();
             Credit = 10;
@@ -42,11 +43,11 @@ namespace ProofOfCredit.Members
         public virtual void Init()
         {
             //Get data
-            if (server!=null)
+            if (Server!=null)
             {
-                MinersList = server.GetCurrentMiners();
-                UsersList = server.GetCurrentUsers();
-                CreditsPerMember = server.GetCreditsPerMember();
+                MinersList = Server.GetCurrentMiners();
+                UsersList = Server.GetCurrentUsers();
+                CreditsPerMember = Server.GetCreditsPerMember();
             }
             else
             {
@@ -65,14 +66,14 @@ namespace ProofOfCredit.Members
         {
             return CreditsPerMember;
         }
-        protected void CalculateMembersCredits()
+        protected void CalculateMembersCredits() //TODO: CHange to protected
         {
             //Add credit for each block generated
             Dictionary<ByteArray, int> creditScores = new Dictionary<ByteArray, int>();
             foreach (Block bl in Blockchain.Chain)
             {
                 //Make sure block is valid
-                if (!(bl.IsValid()))
+                if (!(Blockchain.IsBlockValid(bl)))
                 {
                     ViolationFound(bl);
                     return;
@@ -133,7 +134,6 @@ namespace ProofOfCredit.Members
                             //Make sure resulting blockchain is valid, if not revert to previous state
                             if (blockchain.IsValid())
                             {
-                                CheckToUpdateOficialChain();
                                 //Increase miner's credit
                                 ByteArray id = newBlock.MinerId;
                                 if (CreditsPerMember.ContainsKey(id))
@@ -144,6 +144,7 @@ namespace ProofOfCredit.Members
                                 {
                                     CreditsPerMember[id] = 1;
                                 }
+                                CheckToUpdateOficialChain();
                                 return;
                             }
                             else
@@ -164,7 +165,6 @@ namespace ProofOfCredit.Members
                         if (Blockchain.IsValid())
                         {
                             ChainCandidates.Add(Blockchain);
-                            CheckToUpdateOficialChain();
                             //Increase miner's credit
                             ByteArray id = newBlock.MinerId;
                             if (CreditsPerMember.ContainsKey(id))
@@ -175,6 +175,7 @@ namespace ProofOfCredit.Members
                             {
                                 CreditsPerMember[id] = 1;
                             }
+                            CheckToUpdateOficialChain();
                             return;
                         }
                         else
@@ -186,23 +187,64 @@ namespace ProofOfCredit.Members
             }
             //If here, block was invalid
         }
-        //TODO
         public virtual void CheckToUpdateOficialChain()
         {
-            //Right now just get largest chain
-            Blockchain best = null;
-            foreach (Blockchain chain in ChainCandidates)
+            int[] chainCredits = new int[ChainCandidates.Count()];
+            for (int i = 0; i < ChainCandidates.Count(); i++)
             {
-                if ((best==null) || (chain.Count()>best.Count()))
+                Blockchain chain = ChainCandidates[i];
+                int sum = 0;
+                foreach (Block bl in chain.Chain)
                 {
-                    best = chain;
+                    if (CreditsPerMember.ContainsKey(bl.MinerId))
+                    {
+                        sum += CreditsPerMember[bl.MinerId];
+                    }
                 }
+                chainCredits[i] = sum;
+            }
+            //make sure there were candidates being considered
+            if (chainCredits.Length>0)
+            {
+                int posOfBest = 0;
+                for (int i = 0; i < chainCredits.Length; i++)
+                {
+                    if (chainCredits[posOfBest]>chainCredits[i])
+                    {
+                        posOfBest = i;
+                    }
+                }
+                //The chain with the highest credit was found, make it the official one
+                Blockchain = ChainCandidates[posOfBest];
+                ChainCandidates.Clear();
             }
         }
-        //TODO
         protected void ViolationFound(Block invalidBlock)
         {
-            return;
+            ByteArray prevHash = NaughtyList[NaughtyList.Count()-1].GetHash();
+            List<GenericNaughtyEntry> infractions = new List<GenericNaughtyEntry>();
+            BlockViolationEntry infraction = new BlockViolationEntry(invalidBlock.GetHash(), invalidBlock, invalidBlock.MinerId.Copy());
+            infractions.Add(infraction);
+            NaughtyListBlock bl = new NaughtyListBlock(prevHash, infractions);
+            NaughtyList.Add(bl);
+            Console.WriteLine("Infractions found in block:\n" + bl.ToString());
+            //Communicate new block
+            foreach (Miner miner in MinersList)
+            {
+                miner.AddNaughtyListEntry(bl);
+            }
+            if (Server!=null)
+            {
+                Server.AddNaughtyListEntry(bl);
+            }
+        }
+        protected void AddNaughtyListEntry(NaughtyListBlock bl)
+        {
+            //Make sure new block points to the latest block
+            if (bl.PrevHash.Equals(NaughtyList[NaughtyList.Count].GetHash()))
+            {
+                NaughtyList.Add(bl);
+            }
         }
         //Static calls
         public uint GetLuckyDraws(uint credits)
