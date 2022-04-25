@@ -40,8 +40,9 @@ namespace ProofOfCredit.Members
             CreditsPerMember = new Dictionary<ByteArray, int>();
             CurrentPV = BitConverter.GetBytes(0)[0];
         }
-        public virtual void Init()
+        public virtual void Init(MainServer server)
         {
+            Server = server;
             //Get data
             if (Server!=null)
             {

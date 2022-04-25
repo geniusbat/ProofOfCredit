@@ -1,0 +1,1 @@
+For 1000 transactions wait time was: 1,1684112

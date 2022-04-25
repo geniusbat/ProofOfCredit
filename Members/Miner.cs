@@ -1,4 +1,5 @@
-﻿using ProofOfCredit.Transactions;
+﻿using Newtonsoft.Json;
+using ProofOfCredit.Transactions;
 using ProofOfCredit.Utils;
 using System;
 using System.Collections.Generic;
@@ -13,20 +14,25 @@ namespace ProofOfCredit.Members
     {
         private List<GenericTransaction> TransactionsQueue;
         protected bool CanMine;
+        private bool testMiner;
+        public Miner(bool test) : base()
+        {
+            TransactionsQueue = new List<GenericTransaction>();
+            FillWithRandomTransactions();
+            CanMine = true;
+            testMiner = test;
+        }
         public Miner() : base()
         {
             TransactionsQueue = new List<GenericTransaction>();
             FillWithRandomTransactions();
             CanMine = true;
-            //while (true)
-            //{
-            //    MineNow();
-            //}
+            testMiner = false;
         }
         //Auxiliar method for initializing all miners at once
-        public override void Init()
+        public override void Init(MainServer server)
         {
-
+            base.Init(server);
         }
         public void MineNow()
         {
@@ -47,7 +53,7 @@ namespace ProofOfCredit.Members
             {
                 //Remember that stamp are ms not s
                 ulong difference = time - blockStamp;
-                uint easing = (uint)(difference * 1); //The amount of "easing" per ms. Usually is one, meaning that each ms it is 1 iteration easier to get lucky
+                uint easing = (uint)(difference / 1)*100; //The amount of "easing" per 100 ms. TODO: Change back
                 //Get lucky draws
                 uint luckyDrawsAmount = GetLuckyDraws(Credit);
                 List<uint> luckyDraws = new List<uint>();
@@ -75,10 +81,10 @@ namespace ProofOfCredit.Members
                     if (luckyValue+easing>=luckyDraw)
                     {
                         Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                        Console.WriteLine("Won the lottery!");
+                        Console.WriteLine(Id+" Won the lottery!");
                         Console.WriteLine("Lucky value: " + luckyValue.ToString());
                         Console.WriteLine("Easing: " + easing.ToString());
-                        Console.WriteLine("Lucky draw: " + luckyDraw.ToString()+"\n");
+                        Console.WriteLine("Lucky draw: " + luckyDraw.ToString() + "\n");
                         WonLottery(luckyDraws,i,time,Blockchain);
                         break;
                     }
@@ -89,7 +95,10 @@ namespace ProofOfCredit.Members
         {
             CanMine = false;
             Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
-            Console.WriteLine("New block generated will be: \n"+ block);
+            if (testMiner)
+            {
+                Console.WriteLine("New block generated will be: \n" + block);
+            }
             AddBlockchainCandidate(block);
             //Communicate to network
             foreach(Miner miner in MinersList)
@@ -153,7 +162,10 @@ namespace ProofOfCredit.Members
             {
                 TransactionsQueue.Remove(tr);
             }
-            Console.WriteLine("===========================================================================================\nNew blockchain:\n"+Blockchain);
+            if (testMiner)
+            {
+                //Console.WriteLine("===========================================================================================\nNew blockchain:\n" + Blockchain);
+            }
             FillWithRandomTransactions();
             CanMine = true;
         }

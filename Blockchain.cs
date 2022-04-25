@@ -10,6 +10,7 @@ namespace ProofOfCredit
     class Blockchain
     {
         public List<Block> Chain { get; private set; }
+
         public Blockchain()
         {
             Chain = new List<Block>();
@@ -151,5 +152,9 @@ namespace ProofOfCredit
             }
             Console.WriteLine(ret);
         }
+    }
+    class RootObject
+    {
+        public Blockchain Blockchain { get; set; } 
     }
 }
