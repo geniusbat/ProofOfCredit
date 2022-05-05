@@ -53,7 +53,7 @@ namespace ProofOfCredit.Members
             {
                 //Remember that stamp are ms not s
                 ulong difference = time - blockStamp;
-                uint easing = (uint)(difference / 1)*100; //The amount of "easing" per 100 ms. TODO: Change back
+                uint easing = (uint)(difference / 100);
                 //Get lucky draws
                 uint luckyDrawsAmount = GetLuckyDraws(Credit);
                 List<uint> luckyDraws = new List<uint>();
