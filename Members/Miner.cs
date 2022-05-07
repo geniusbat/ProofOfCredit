@@ -12,7 +12,7 @@ namespace ProofOfCredit.Members
 {
     class Miner : Member
     {
-        private List<GenericTransaction> TransactionsQueue;
+        public List<GenericTransaction> TransactionsQueue; //TODO:Change to private
         protected bool CanMine;
         private bool testMiner;
         public Miner(bool test) : base()
@@ -169,7 +169,7 @@ namespace ProofOfCredit.Members
             FillWithRandomTransactions();
             CanMine = true;
         }
-        private void FillWithRandomTransactions()
+        public void FillWithRandomTransactions() //TODO:Change to private
         {
             Random rd = new Random();
             int aux = rd.Next(1, 5);

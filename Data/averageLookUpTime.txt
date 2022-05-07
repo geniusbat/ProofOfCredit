@@ -1,1 +1,1 @@
-For 1000 transactions wait time was: 1,1684112
+The average lookup time for a transaction is: 0,0002ms

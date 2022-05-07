@@ -37,5 +37,16 @@ namespace ProofOfCredit
                 AllMinersMine(server.GetCurrentMiners());
             }
         }
+        static void GenerateTestChain()
+        {
+            Blockchain chain = new Blockchain();
+            Miner m = new Miner();
+            while (true)
+            {
+                m.FillWithRandomTransactions();
+                List<Transactions.GenericTransaction> trs = m.TransactionsQueue;
+                Block b = new Block(trs,m.Id,BitConverter.GetBytes(0)[0], (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), chain.Chain[chain.Chain.Count-1].GetHash());
+            }
+        }
     }
 }
