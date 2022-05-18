@@ -172,7 +172,11 @@ namespace ProofOfCredit.Members
         private void FillWithRandomTransactions()
         {
             Random rd = new Random();
-            int aux = rd.Next(1, 5);
+            int aux = rd.Next(2, 6);
+            if (!(aux % 2 == 0))
+            {
+                aux += 1;
+            }
             for (int i = 0; i < aux; i++)
             {
                 GenericTransaction tr = new GenericTransaction();

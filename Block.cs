@@ -11,12 +11,13 @@ namespace ProofOfCredit
 {
     class Block
     {
-        public ulong Stamp;
-        public List<GenericTransaction> Transactions;
-        public ByteArray PrevHash;
-        public ByteArray MinerId;
-        public ulong TimeGen;
-        public byte PV;
+        public ulong Stamp { get; protected set; }
+        public ByteArray MerkleRootHash { get; protected set; }
+        public List<GenericTransaction> Transactions { get; protected set; }
+        public ByteArray PrevHash { get; protected set; }
+        public ByteArray MinerId { get; protected set; }
+        public ulong TimeGen { get; protected set; }
+        public byte PV { get; protected set; }
         public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash)
         {
             Stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //Stamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -72,11 +73,19 @@ namespace ProofOfCredit
             {
                 ret = false;
             }
-            foreach (GenericTransaction tr in Transactions)
+            //The number of transactions must be even
+            else if (!(Transactions.Count() % 2 == 0))
             {
-                if (!(tr.IsValid())) {
-                    ret = false;
-                    break;
+                ret = false;
+            }
+            else {
+                foreach (GenericTransaction tr in Transactions)
+                {
+                    if (!(tr.IsValid()))
+                    {
+                        ret = false;
+                        break;
+                    }
                 }
             }
             return ret;
@@ -89,6 +98,48 @@ namespace ProofOfCredit
             luckyValueHash[2] = 0;
             luckyValueHash[3] = 0;
             return BitConverter.ToUInt32(luckyValueHash);
+        }
+        public List<ByteArray> ListGetMerkleRootTree()
+        {
+            List<ByteArray> ret = new List<ByteArray>();
+            List<GenericTransaction> orderedTransactions = Transactions.OrderBy(o => o.Id).ToList();
+            if (!(Transactions.Count() % 2 == 0))
+            {
+                throw new Exception();
+            }
+            Dictionary<int, List<ByteArray>> tree = new Dictionary<int, List<ByteArray>>();
+            int levels = 1 + orderedTransactions.Count() / 2;
+            List<ByteArray> aux;
+            for (int i = 0; i < levels; i++)
+            {
+                aux = new List<ByteArray>();
+                //For the first level
+                if (i == 0)
+                {
+                    foreach (GenericTransaction tr in orderedTransactions)
+                    {
+                        aux.Add(tr.GetHash());
+                    }
+                }
+                //For the other levels
+                else
+                {
+                    for (int j = 0; j < tree[i-1].Count(); j+=2)
+                    {
+                        aux.Add(tree[i - 1][j].Sum(tree[i - 1][j + 1]));
+                    }
+                }
+                tree[i] = aux;
+            }
+            for (int a = levels-1; a >= 0 ; a--) { }
+            {
+                var f = tree[a];
+                foreach (ByteArray node in )
+                {
+                    ret.Add(node);
+                }
+            }
+            return ret;
         }
         static public Block GetGenesis()
         {
