@@ -3,6 +3,7 @@ using ProofOfCredit.NaughtyList;
 using ProofOfCredit.Utils;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace ProofOfCredit
 {
@@ -10,7 +11,24 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-            Testing.TestReadSpeed();
+            uint max = 0;
+            Random rd = new Random();
+            for (int i = 0; i < 100000; i++)
+            {
+                int a = rd.Next(0, 256);
+                int b = rd.Next(0, 256);
+                byte[] luckyValueHash = new byte[4];
+                luckyValueHash[0] = BitConverter.GetBytes(a)[0];
+                luckyValueHash[1] = (byte)(Math.Max(b - 192, 0));
+                luckyValueHash[2] = 0;
+                luckyValueHash[3] = 0;
+                uint res = BitConverter.ToUInt32(luckyValueHash);
+                if (max < res)
+                {
+                    max = res;
+                } 
+            }
+            Console.WriteLine("Max was: " + max);
         }
         static void AllMinersMine(List<Miner> miners)
         {
@@ -29,23 +47,12 @@ namespace ProofOfCredit
             foreach (Miner miner in server.GetCurrentMiners())
             {
                 miner.Init(server);
-                Console.WriteLine("User: "+miner.Id);
+                Console.WriteLine("User: " + miner.Id);
             }
             Console.WriteLine("Start");
             while (true)
             {
                 AllMinersMine(server.GetCurrentMiners());
-            }
-        }
-        static void GenerateTestChain()
-        {
-            Blockchain chain = new Blockchain();
-            Miner m = new Miner();
-            while (true)
-            {
-                m.FillWithRandomTransactions();
-                List<Transactions.GenericTransaction> trs = m.TransactionsQueue;
-                Block b = new Block(trs,m.Id,BitConverter.GetBytes(0)[0], (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), chain.Chain[chain.Chain.Count-1].GetHash());
             }
         }
     }

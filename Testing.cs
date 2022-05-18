@@ -68,8 +68,10 @@ namespace ProofOfCredit
             Random rd = new Random();
             Stopwatch timer = new Stopwatch();
             long averageTime = 0;
-            //For each block get a random transacion and look for it from beginning to end of chain
-            for (int i = 0; i < blockCount; i++)
+            long maxTicks = 0;
+            long minTicks = -1;
+            //For each block get a random transacion and look for it from beginning to end of chain. Skip genesis block
+            for (int i = 1; i < blockCount; i++)
             {
                 List<Transaction> trs = blockchain.Chain[i].Transactions;
                 Transaction tr = null;
@@ -101,11 +103,21 @@ namespace ProofOfCredit
                     {
                         averageTime = (averageTime + timer.ElapsedTicks) / 2;
                     }
+                    if (timer.ElapsedTicks > maxTicks)
+                    {
+                        maxTicks = timer.ElapsedTicks;
+                    }
+                    else if ((timer.ElapsedTicks < minTicks) || (minTicks==-1))
+                    {
+                        minTicks = timer.ElapsedTicks;
+                    }
                     timer.Reset();
                 }
             }
             Double totalTime = TimeSpan.FromTicks(averageTime).TotalMilliseconds;
             Console.WriteLine("The average lookup time for a transaction is: " + totalTime + "ms");
+            Console.WriteLine("Largest wait time in ms was: "+ TimeSpan.FromTicks(maxTicks).TotalMilliseconds);
+            Console.WriteLine("Smallest wait time in ms was: " + TimeSpan.FromTicks(minTicks).TotalMilliseconds);
             string content = "The average lookup time for a transaction is: " + totalTime + "ms";
             System.IO.File.WriteAllText(@"E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\Data\averageLookUpTime.txt", content);
         }

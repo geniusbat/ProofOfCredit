@@ -1,1 +1,1 @@
-The average lookup time for a transaction is: 0,0002ms
+The average lookup time for a transaction is: 0,0001ms

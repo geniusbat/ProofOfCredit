@@ -85,7 +85,7 @@ namespace ProofOfCredit
         {
             byte[] luckyValueHash = new byte[4];
             luckyValueHash[0] = GetHash().Bytes[0];
-            luckyValueHash[1] = (byte)(Math.Max(GetHash().Bytes[1] - 252, 0));
+            luckyValueHash[1] = (byte)(Math.Max(GetHash().Bytes[1] - 192, 0));
             luckyValueHash[2] = 0;
             luckyValueHash[3] = 0;
             return BitConverter.ToUInt32(luckyValueHash);
