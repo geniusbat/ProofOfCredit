@@ -9,3 +9,5 @@ obj/project.assets.json
 obj/project.nuget.cache
 obj/ProofOfCredit.csproj.nuget.dgspec.json
 obj/ProofOfCredit.csproj.nuget.g.props
+*.dll
+*.pdb
