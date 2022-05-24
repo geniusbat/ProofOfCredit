@@ -32,3 +32,5 @@ E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\obj\Debug\net5.0\ProofOfC
 E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.genruntimeconfig.cache
 E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\bin\Debug\net5.0\Newtonsoft.Json.dll
 E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.csproj.CopyComplete
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\PC\Documents\Proyectos\Programacion\ProofOfCredit\obj\Debug\net5.0\ProofOfCredit.csproj.CopyComplete

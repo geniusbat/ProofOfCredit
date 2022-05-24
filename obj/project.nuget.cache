@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "stNAy0lB5ClGgsGZlNxb6Cfap4tukFacVVLTwMtVF8EcbpYCVuHv2AXAnvOnNpeDryya3Zi5tymIEMA9C3t2uw==",
+  "dgSpecHash": "Kl+FxmBMxEPvui0mhUtNb6caUrxi5R27Niwbaose6BhHDrQaFGaO59HgUr/PapCBrnAksmMFqODbTRphWsbXbA==",
   "success": true,
-  "projectFilePath": "E:\\Proyectos\\Programación\\ProofOfCredit\\ProofOfCredit\\ProofOfCredit.csproj",
+  "projectFilePath": "C:\\Users\\PC\\Documents\\Proyectos\\Programacion\\ProofOfCredit\\ProofOfCredit.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Tytan\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+    "C:\\Users\\PC\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],
   "logs": []
 }

@@ -1,16 +1,14 @@
 ﻿using ProofOfCredit.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace ProofOfCredit.Transactions
 {
     class GenericTransaction
     {
-        public uint Id { get; protected set; } //TODO: Change to a more appropiate data type
+        public uint Id { get; protected set; } 
         public ByteArray From { get; protected set; }
         public ByteArray To { get; protected set; }
         public uint Quantity  { get; protected set; }
@@ -66,6 +64,20 @@ namespace ProofOfCredit.Transactions
         public GenericTransaction Copy()
         {
             return new GenericTransaction(Id,From.Copy(),To.Copy(), Quantity,Sign.Copy());
+        }
+        public string Serialize()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["id"] = Id.ToString();
+            dic["from"] = From.Serialize();
+            dic["to"] = To.Serialize();
+            dic["quantity"] = Quantity.ToString();
+            dic["sign"] = Sign.Serialize();
+            return JsonConvert.SerializeObject(dic);
+        }
+        public void Deserialize(string data)
+        {
+
         }
     }
 }
