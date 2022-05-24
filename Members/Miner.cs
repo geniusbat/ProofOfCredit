@@ -95,6 +95,7 @@ namespace ProofOfCredit.Members
         {
             CanMine = false;
             Block block = new Block(TransactionsQueue, Id, 0, time, blockchainToUse.LastBlock().GetHash());
+            Console.WriteLine(block.Serialize());
             if (testMiner)
             {
                 Console.WriteLine("New block generated will be: \n" + block);

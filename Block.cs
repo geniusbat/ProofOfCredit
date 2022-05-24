@@ -4,15 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ProofOfCredit
 {
     class Block
     {
         public ulong Stamp { get; protected set; }
-        public ByteArray MerkleRootHash { get; protected set; }
         public List<GenericTransaction> Transactions { get; protected set; }
         public ByteArray PrevHash { get; protected set; }
         public ByteArray MinerId { get; protected set; }
@@ -99,6 +97,7 @@ namespace ProofOfCredit
             luckyValueHash[3] = 0;
             return BitConverter.ToUInt32(luckyValueHash);
         }
+        //TODO: Not finished
         public List<ByteArray> ListGetMerkleRootTree()
         {
             List<ByteArray> ret = new List<ByteArray>();
@@ -131,14 +130,7 @@ namespace ProofOfCredit
                 }
                 tree[i] = aux;
             }
-            for (int a = levels-1; a >= 0 ; a--) { }
-            {
-                var f = tree[a];
-                foreach (ByteArray node in )
-                {
-                    ret.Add(node);
-                }
-            }
+            //TODO: Go through each level
             return ret;
         }
         static public Block GetGenesis()
@@ -171,6 +163,36 @@ namespace ProofOfCredit
         public bool Equals(Block bl)
         {
             return GetHash() == bl.GetHash();
+        }
+        public string Serialize()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["stamp"] = Stamp.ToString();
+            dic["timeGen"] = TimeGen.ToString();
+            dic["minerId"] = MinerId.Serialize();
+            dic["pv"] = PV.ToString();
+            dic["prevHash"] = PrevHash.Serialize();
+            dic["hash"] = GetHash().Serialize();
+            dic["transactions"] = "{";
+            bool first = true;
+            foreach(GenericTransaction tr in Transactions)
+            {
+                if (first)
+                {
+                    dic["transactions"] += tr.Serialize();
+                    first = false;
+                }
+                else
+                {
+                    dic["transactions"] += "," + tr.Serialize();
+                }
+            }
+            dic["transactions"] += "}";
+            return JsonConvert.SerializeObject(dic);
+        }
+        public void Deserialize(string data)
+        {
+
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ProofOfCredit.Utils
 {
@@ -185,6 +183,17 @@ namespace ProofOfCredit.Utils
         public ByteArray Copy()
         {
             return new ByteArray((Byte[])Bytes.Clone());
+        }
+        public string Serialize()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic["bytes"] = BitConverter.ToString(Bytes);
+            dic["length"] = Length.ToString();
+            return JsonConvert.SerializeObject(dic);
+        }
+        public void Deserialize(string data)
+        {
+
         }
     }
 }

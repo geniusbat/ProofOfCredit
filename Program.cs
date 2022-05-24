@@ -11,24 +11,11 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-            uint max = 0;
-            Random rd = new Random();
-            for (int i = 0; i < 100000; i++)
+            Miner mi = new Miner();
+            while(true)
             {
-                int a = rd.Next(0, 256);
-                int b = rd.Next(0, 256);
-                byte[] luckyValueHash = new byte[4];
-                luckyValueHash[0] = BitConverter.GetBytes(a)[0];
-                luckyValueHash[1] = (byte)(Math.Max(b - 192, 0));
-                luckyValueHash[2] = 0;
-                luckyValueHash[3] = 0;
-                uint res = BitConverter.ToUInt32(luckyValueHash);
-                if (max < res)
-                {
-                    max = res;
-                } 
+                mi.MineNow();
             }
-            Console.WriteLine("Max was: " + max);
         }
         static void AllMinersMine(List<Miner> miners)
         {
