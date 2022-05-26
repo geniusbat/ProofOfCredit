@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace ProofOfCredit.Utils
@@ -17,6 +19,10 @@ namespace ProofOfCredit.Utils
         {
 
         }
+        public ByteArray(string minerData)
+        {
+            Deserialize(minerData);
+        }
         public void FillRandomly(int maxLength)
         {
             Bytes = new byte[maxLength];
@@ -24,7 +30,7 @@ namespace ProofOfCredit.Utils
             rd.NextBytes(Bytes);
             Length = Bytes.Length;
         }
-        public void SetBytes(byte[] inputBytes)
+        public void Set(byte[] inputBytes)
         {
             Bytes = inputBytes;
             Length = inputBytes.Length;
@@ -187,13 +193,40 @@ namespace ProofOfCredit.Utils
         public string Serialize()
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic["bytes"] = BitConverter.ToString(Bytes);
+            dic["bytes"] = "";
+            bool first = true;
+            foreach (byte item in Bytes)
+            {
+                if (first)
+                {
+                    first = false;
+                    dic["bytes"] += item.ToString();
+                }
+                else
+                {
+                    dic["bytes"] += "," + item.ToString();
+                }
+            }
             dic["length"] = Length.ToString();
             return JsonConvert.SerializeObject(dic);
         }
         public void Deserialize(string data)
         {
-
+            var dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+            List<string> bytesList = dic["bytes"].Split(",").ToList();
+            if (bytesList.Count()== int.Parse(dic["length"]))
+            {
+                byte[] bts = new byte[bytesList.Count()];
+                for (int i = 0; i < bytesList.Count(); i++)
+                {
+                    bts[i] = BitConverter.GetBytes(int.Parse(bytesList[i]))[0];
+                }
+                Set(bts);
+            }
+            else
+            {
+                throw new IndexOutOfRangeException();
+            }
         }
     }
 }

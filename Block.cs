@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace ProofOfCredit
 {
@@ -16,6 +17,11 @@ namespace ProofOfCredit
         public ByteArray MinerId { get; protected set; }
         public ulong TimeGen { get; protected set; }
         public byte PV { get; protected set; }
+        //Never use this constructor, just for testing or serializing
+        public Block() 
+        {
+
+        }
         public Block(List<GenericTransaction> listOfTransactions, ByteArray miner, byte currentPv, ulong timeOfCreation, ByteArray prevHash)
         {
             Stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); //Stamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -173,7 +179,7 @@ namespace ProofOfCredit
             dic["pv"] = PV.ToString();
             dic["prevHash"] = PrevHash.Serialize();
             dic["hash"] = GetHash().Serialize();
-            dic["transactions"] = "{";
+            dic["transactions"] = "[";
             bool first = true;
             foreach(GenericTransaction tr in Transactions)
             {
@@ -187,12 +193,46 @@ namespace ProofOfCredit
                     dic["transactions"] += "," + tr.Serialize();
                 }
             }
-            dic["transactions"] += "}";
+            dic["transactions"] += "]";
             return JsonConvert.SerializeObject(dic);
         }
         public void Deserialize(string data)
         {
-
+            Dictionary<string, string> dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+            Stamp = ulong.Parse(dic["stamp"]);
+            TimeGen = ulong.Parse(dic["timeGen"]);
+            MinerId = new ByteArray();
+            MinerId.Deserialize(dic["minerId"]);
+            PrevHash = new ByteArray();
+            PrevHash.Deserialize(dic["prevHash"]);
+            PV = Encoding.ASCII.GetBytes(dic["pv"])[0];
+            Transactions = new List<GenericTransaction>();
+            //Due to Newtonsoft.json limitations we cannot leave deserialization to transactions
+            foreach (Dictionary<string, string> item in JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(dic["transactions"]))
+            {
+                uint id = uint.Parse(item["id"]);
+                uint quantity = uint.Parse(item["quantity"]);
+                ByteArray from = new ByteArray();
+                from.Deserialize(item["from"]);
+                ByteArray to = new ByteArray();
+                to.Deserialize(item["to"]);
+                ByteArray sign = new ByteArray();
+                sign.Deserialize(item["sign"]);
+                GenericTransaction tr = new GenericTransaction(id,from,to,quantity,sign);
+                Transactions.Add(tr);
+            }
+            ByteArray hash = new ByteArray();
+            hash.Deserialize(dic["hash"]);
+            Console.WriteLine(hash);
+            Console.WriteLine();
+            Console.WriteLine(GetHash());
+            if (GetHash().Equals(hash)) {
+                Console.WriteLine("SII");
+            }
+            else
+            {
+                throw new Exception();
+            }
         }
     }
 }

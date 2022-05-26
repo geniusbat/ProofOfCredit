@@ -11,11 +11,20 @@ namespace ProofOfCredit
     {
         static void Main(string[] args)
         {
-            Miner mi = new Miner();
+            ByteArray ba = new ByteArray(BitConverter.GetBytes(1234));
+            Console.WriteLine(ba.ToString());
+            string f = ba.Serialize();
+            Console.WriteLine(f);
+            ba.Deserialize(f);
+            Console.WriteLine(ba.ToString());
+            Block b = new Block();
+            b.Deserialize(System.IO.File.ReadAllText(@"E:\Proyectos\Programación\ProofOfCredit\ProofOfCredit\Data\serializedBlock.txt"));
+            Console.WriteLine(b);
+            /*Miner mi = new Miner();
             while(true)
             {
                 mi.MineNow();
-            }
+            }*/
         }
         static void AllMinersMine(List<Miner> miners)
         {
