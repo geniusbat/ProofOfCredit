@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ProofOfCredit.Members;
 using ProofOfCredit.Transactions;
 using ProofOfCredit.Utils;
 using System;
@@ -12,6 +13,105 @@ namespace ProofOfCredit
 {
     class Testing
     {
+
+        public static void TestBlockValidity()
+        {
+            Random rd = new Random();
+            Miner miner = new Miner();
+            ulong stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            List<GenericTransaction> trs = new List<GenericTransaction>();
+            for (int i = 0; i < 4; i++)
+            {
+                GenericTransaction tr = new GenericTransaction();
+                trs.Add(tr);
+            }
+            //Random block
+            Block b = new Block(trs,miner.Id,BitConverter.GetBytes(0)[0],stamp,Block.GetGenesis().GetHash());
+            if (!(b.IsValid() == true))
+            {
+                Console.WriteLine("Block validity false");
+            }
+            else
+            {
+                Console.WriteLine("Block validity correct");
+            }
+        }
+        public static void TestTransactionValidity()
+        {
+            Random rd = new Random();
+            uint id = (uint)rd.Next(0, 1000);
+            ByteArray from = new ByteArray();
+            ByteArray to = new ByteArray();
+            from.FillRandomly(16);
+            to.FillRandomly(16);
+            uint quantity = (uint)rd.Next(1, 10);
+            ByteArray sign = new ByteArray();
+            sign.FillRandomly(20);
+            GenericTransaction tr = new GenericTransaction(id, from, to, quantity, sign);
+            //Console.WriteLine("Transaction hash: "+tr.GetHash());
+            if ((from.Equals(tr.From)) & (to.Equals(tr.To)) & (id == (tr.Id)) & (quantity == (tr.Quantity)) & (sign.Equals(tr.Sign)))
+            {
+                Console.WriteLine("Transaction validity correct");
+            }
+            else
+            {
+                Console.WriteLine("Transaction validity false");
+            }
+        }
+        public static void TestBlockchainValidity()
+        {
+            Random rd = new Random();
+            //Generate a few random blocks
+            Miner miner = new Miner();
+            ulong stamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            List<GenericTransaction> trs = new List<GenericTransaction>();
+            List<GenericTransaction> trs2 = new List<GenericTransaction>();
+            for (int i = 0; i < 4; i++)
+            {
+                GenericTransaction tr = new GenericTransaction();
+                GenericTransaction tr2 = new GenericTransaction();
+                trs.Add(tr);
+                trs2.Add(tr2);
+            }
+            Block b1 = new Block(trs, miner.Id, BitConverter.GetBytes(0)[0], stamp, Block.GetGenesis().GetHash());
+            Block b2 = new Block(trs2, miner.Id, BitConverter.GetBytes(0)[0], stamp, b1.GetHash());
+            Blockchain bl = new Blockchain();
+            bl.Add(b1);
+            bl.Add(b2);
+            if (!(bl.IsValid()))
+            {
+                Console.WriteLine("Blockchain validity false");
+            }
+            else
+            {
+                Console.WriteLine("Blockchain validity correct");
+            }
+        }
+        public static void TestMining()
+        {
+            //Instance network
+            List<Miner> miners = new List<Miner>();
+            MainServer server = new MainServer();
+            Miner m1 = new Miner(true); server.RegisterMiner(m1);
+            Miner m2 = new Miner(); server.RegisterMiner(m2);
+            Miner m3 = new Miner(); server.RegisterMiner(m3);
+            Miner m4 = new Miner(); server.RegisterMiner(m4);
+            foreach (Miner miner in server.GetCurrentMiners())
+            {
+                miner.Init(server);
+                Console.WriteLine("User: " + miner.Id);
+                miners.Add(miner);
+            }
+            Console.WriteLine("Start");
+            while (true)
+            {
+                foreach (Miner miner in miners)
+                {
+                    miner.MineNow();
+                }
+            }
+        }
+
         public static void RandomTestReadSpeed()
         {
             //Get a random transaction and try to look for it in the blockchain block by block (obviously it is a brute way but it is the default method).

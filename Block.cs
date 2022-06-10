@@ -101,6 +101,7 @@ namespace ProofOfCredit
             luckyValueHash[1] = (byte)(Math.Max(GetHash().Bytes[1] - 192, 0));
             luckyValueHash[2] = 0;
             luckyValueHash[3] = 0;
+            var a = new ByteArray(luckyValueHash);
             return BitConverter.ToUInt32(luckyValueHash);
         }
         //TODO: Not finished

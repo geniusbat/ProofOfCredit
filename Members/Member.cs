@@ -67,7 +67,7 @@ namespace ProofOfCredit.Members
         {
             return CreditsPerMember;
         }
-        protected void CalculateMembersCredits() //TODO: CHange to protected
+        protected void CalculateMembersCredits()
         {
             //Add credit for each block generated
             Dictionary<ByteArray, int> creditScores = new Dictionary<ByteArray, int>();
@@ -76,7 +76,7 @@ namespace ProofOfCredit.Members
                 //Make sure block is valid
                 if (!(Blockchain.IsBlockValid(bl)))
                 {
-                    ViolationFound(bl);
+                    InfractionFound(bl);
                     return;
                 }
                 //Miner already in dict
@@ -220,7 +220,7 @@ namespace ProofOfCredit.Members
                 ChainCandidates.Clear();
             }
         }
-        protected void ViolationFound(Block invalidBlock)
+        protected void InfractionFound(Block invalidBlock)
         {
             ByteArray prevHash = NaughtyList[NaughtyList.Count()-1].GetHash();
             List<GenericNaughtyEntry> infractions = new List<GenericNaughtyEntry>();
