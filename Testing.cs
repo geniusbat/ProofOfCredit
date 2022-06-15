@@ -78,7 +78,11 @@ namespace ProofOfCredit
             Blockchain bl = new Blockchain();
             bl.Add(b1);
             bl.Add(b2);
-            if (!(bl.IsValid()))
+            bool valid = !(bl.IsValid());
+            bl = new Blockchain();
+            bl.Add(new Block(trs, miner.Id, BitConverter.GetBytes(0)[0], stamp, b1.GetHash()));
+            valid = valid & !bl.IsValid();
+            if (valid)
             {
                 Console.WriteLine("Blockchain validity false");
             }

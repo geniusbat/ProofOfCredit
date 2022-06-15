@@ -22,7 +22,7 @@ namespace ProofOfCredit
             {
                 if (!(IsBlockValid(bl)))
                 {
-                    Console.WriteLine("Error in: "+bl);
+                    //Console.WriteLine("Error in: "+bl);
                     return false;
                 }
             }

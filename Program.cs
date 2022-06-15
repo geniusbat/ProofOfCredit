@@ -13,6 +13,7 @@ namespace ProofOfCredit
         {
             Testing.TestBlockValidity();
             Testing.TestTransactionValidity();
+            Testing.TestBlockchainValidity();
             Testing.TestMining();
         }
     }
