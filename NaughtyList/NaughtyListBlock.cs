@@ -16,12 +16,12 @@ namespace ProofOfCredit.NaughtyList
         public NaughtyListBlock()
         {
             PrevHash = GetGenesis().GetHash().Copy();
-            DayStamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); //TODO: Modulate to unix time from the beginning of the day
+            DayStamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
             Data = new List<GenericNaughtyEntry>();
         }
         public NaughtyListBlock(ByteArray prevHash, List<GenericNaughtyEntry> data)
         {
-            DayStamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeSeconds(); //TODO: Modulate to unix time from the beginning of the day
+            DayStamp = (ulong)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds;
             PrevHash = prevHash.Copy();
             Data = new List<GenericNaughtyEntry>(data);
         }
